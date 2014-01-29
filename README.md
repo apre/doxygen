@@ -1,3 +1,16 @@
+About this repository
+=====================
+The official doxygen repository is there: https://github.com/doxygen/doxygen
+
+
+This repository is intended for my personal experimentation against 
+the doxygen codebase.
+
+I guess you want to go to https://github.com/doxygen/doxygen instead of 
+my repository.
+
+
+
 Doxygen
 ===============
 Doxygen is the de facto standard tool for generating documentation from 
