@@ -17,6 +17,8 @@
 //#include "y.tab.h"
 
 int error_count;
+
+int Ada_lexline=1;
 %}
 %option noyywrap 
 
@@ -30,39 +32,40 @@ BASED_INTEGER           {EXTENDED_DIGIT}(_?{EXTENDED_DIGIT})*
 BASED_LITERAL           {BASE}#{BASED_INTEGER}(\.{BASED_INTEGER})?#{EXPONENT}?
 
 %%
-"."                      {push_tocken(DOT,yytext);}  /* return('.');    yytext             */
-"<"                      {push_tocken(LT,yytext);}  /* return('<');                 */
-"("                      {push_tocken(PAR_OPEN,yytext);}  /* return('(');                 */
-"+"                      {push_tocken(PLUS,yytext);}  /* return('+');                 */
-"|"                      {push_tocken(PIPE,yytext);}  /* return('|');                 */
-"&"                      {push_tocken(AMP,yytext);}  /* return('&');                 */
-"*"                      {push_tocken(STAR,yytext);}  /* return('*');                 */
-")"                      {push_tocken(PAR_CLOSE,yytext);}  /* return(')');                 */
-";"                      {push_tocken(SEMI_COLUMN,yytext);}  /* return(';');                 */
-"-"                      {push_tocken(MINUS,yytext);}  /* return('-');                 */
-"/"                      {push_tocken(SLASH,yytext);}  /* return('/');                 */
-","                      {push_tocken(COMA,yytext);}  /* return(',');                 */
-">"                      {push_tocken(GT,yytext);}  /* return('>');                 */
-":"                      {push_tocken(COLUN,yytext);}  /* return(':');                 */
-"="                      {push_tocken(EQUAL,yytext);}  /* return('=');                 */
-"'"                      {push_tocken(TICK,yytext);}  /* return(TIC);                 */
-".."                     {push_tocken(DOT_DOT,yytext);}  /* return(DOT_DOT);                 */
-"<<"                     {push_tocken(SHIFT_LEFT,yytext);}  /* return(LT_LT);                 */
-"<>"                     {push_tocken(LTGT,yytext);}  /* return(BOX);                 */
-"<="                     {push_tocken(LTOEQ,yytext);}  /* return(LT_EQ);                 */
-"**"                     {push_tocken(STARSTAR,yytext);}  /* return(EXPON);                 */
-"/="                     {push_tocken(NOTEQ,yytext);}  /* return(NE);                 */
-">>"                     {push_tocken(SHIFT_RIGHT,yytext);}  /* return(GT_GT);                 */
-">="                     {push_tocken(GTOEQ,yytext);}  /* return(GE);                 */
-":="                     {push_tocken(ASSIGN,yytext);}  /* return(IS_ASSIGNED);                 */
-"=>"                     {push_tocken(ARROW,yytext);}  /* return(RIGHT_SHAFT);                 */
-[a-zA-Z](_?[a-zA-Z0-9])* {push_tocken(KEYWORD,yytext);}  /* return(lk_keyword(yytext));                 */
-"'"."'"                  {push_tocken(CHAR_LIT,yytext);}  /* return(char_lit);                 */
-\"(\"\"|[^\n\"])*\"      {push_tocken(CHAR_STRING,yytext);}  /* return(char_string);                 */
-{DECIMAL_LITERAL}        {push_tocken(NUMERIC_LIT,yytext);}  /* return(numeric_lit);                 */
-{BASED_LITERAL}          {push_tocken(NUMERIC_LIST,yytext);}  /* return(numeric_lit);                 */
---.*\n                   {push_tocken(COMMENT,yytext);}  ;
-[ \t\n\f]                {printf("%s ",yytext);}  ;
+"."                      {push_tocken(DOT,Ada_lexline,yytext);}  
+"<"                      {push_tocken(LT,Ada_lexline,yytext);}  
+"("                      {push_tocken(PAR_OPEN,Ada_lexline,yytext);}  
+"+"                      {push_tocken(PLUS,Ada_lexline,yytext);}  
+"|"                      {push_tocken(PIPE,Ada_lexline,yytext);}  
+"&"                      {push_tocken(AMP,Ada_lexline,yytext);}  
+"*"                      {push_tocken(STAR,Ada_lexline,yytext);}  
+")"                      {push_tocken(PAR_CLOSE,Ada_lexline,yytext);}  
+";"                      {push_tocken(SEMI_COLUMN,Ada_lexline,yytext);}  
+"-"                      {push_tocken(MINUS,Ada_lexline,yytext);}  
+"/"                      {push_tocken(SLASH,Ada_lexline,yytext);}  
+",Ada_lexline,"                      {push_tocken(COMA,Ada_lexline,yytext);}  
+">"                      {push_tocken(GT,Ada_lexline,yytext);}  
+":"                      {push_tocken(COLUN,Ada_lexline,yytext);}  
+"="                      {push_tocken(EQUAL,Ada_lexline,yytext);}  
+"'"                      {push_tocken(TICK,Ada_lexline,yytext);}  
+".."                     {push_tocken(DOT_DOT,Ada_lexline,yytext);}  
+"<<"                     {push_tocken(SHIFT_LEFT,Ada_lexline,yytext);}  
+"<>"                     {push_tocken(LTGT,Ada_lexline,yytext);}  
+"<="                     {push_tocken(LTOEQ,Ada_lexline,yytext);}  
+"**"                     {push_tocken(STARSTAR,Ada_lexline,yytext);}  
+"/="                     {push_tocken(NOTEQ,Ada_lexline,yytext);}  
+">>"                     {push_tocken(SHIFT_RIGHT,Ada_lexline,yytext);}  
+">="                     {push_tocken(GTOEQ,Ada_lexline,yytext);}  
+":="                     {push_tocken(ASSIGN,Ada_lexline,yytext);}  
+"=>"                     {push_tocken(ARROW,Ada_lexline,yytext);}  
+[a-zA-Z](_?[a-zA-Z0-9])* {push_tocken(KEYWORD,Ada_lexline,yytext);}  
+"'"."'"                  {push_tocken(CHAR_LIT,Ada_lexline,yytext);}  
+\"(\"\"|[^\n\"])*\"      {push_tocken(CHAR_STRING,Ada_lexline,yytext);}  
+{DECIMAL_LITERAL}        {push_tocken(NUMERIC_LIT,Ada_lexline,yytext);}  
+{BASED_LITERAL}          {push_tocken(NUMERIC_LIST,Ada_lexline,yytext);}  
+--.*\n                   {push_tocken(COMMENT,Ada_lexline,yytext);Ada_lexline++;}  ;
+[\n]                     {push_tocken(NEW_LINE,Ada_lexline,yytext);Ada_lexline++;printf("%s ",yytext);}  ;
+[ \t\f]                {push_tocken(SEP,Ada_lexline,yytext);printf("%s ",yytext);}  ;
 .                      {fprintf(stderr, "  Illegal character:%c: on line %d\n",
                             *yytext, yylineno);
                          error_count++;}

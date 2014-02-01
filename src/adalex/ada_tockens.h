@@ -36,6 +36,8 @@ CHAR_STRING,
 NUMERIC_LIT,
 NUMERIC_LIST,
 COMMENT,
+NEW_LINE,
+SEP,
 } Ada_Tocken_Type_T;
 
 
@@ -45,7 +47,7 @@ COMMENT,
  #define EXTERNC
 #endif
 
-EXTERNC void push_tocken(Ada_Tocken_Type_T,const char*);
+EXTERNC void push_tocken(Ada_Tocken_Type_T,int line,const char*);
 
 #undef EXTERNC
 
