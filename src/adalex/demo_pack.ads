@@ -18,7 +18,7 @@ package demo_pack.types is
 	--! 
 	--  @brief Speed representation for a bike.
 	--  This is a integer range. 
-	type Speed_T is range 0..90;
+	typE Speed_T is range 0..90;
 
 
 

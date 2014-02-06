@@ -1,5 +1,5 @@
 /*
- * Show off concurrent abilities.
+ * Show off AdaParser abilities.
  */
 
 #include <iostream>
@@ -32,7 +32,7 @@ void print_tocken(const char* saved_p, const char* p) {
 
 }
 
-struct Concurrent
+struct AdaParser
 {
 	int cur_line;
 	int cur_char;
@@ -62,12 +62,12 @@ struct Concurrent
 
 
 %%{
-	machine Concurrent; 
+	machine AdaParser; 
 
 	action package_name_found {
 		cout << "package name found: ";
 		//printf("p:%s\n",p);
-print_tocken(p_start_packname,p_end_packname);
+		print_tocken(p_start_packname,p_end_packname);
 	}
 
 	action save_p{
@@ -75,11 +75,11 @@ print_tocken(p_start_packname,p_end_packname);
 		;
 	}
 
- 
-action with_found {
-	cout << "with found : " ;
-print_tocken(p_start_with,p_end_with);
-}
+
+	action with_found {
+		cout << "with found : " ;
+		print_tocken(p_start_with,p_end_with);
+	}
 	action package_found {
 		cout << "package found" << endl;
 		//printf("p:%s\n",p);
@@ -204,14 +204,14 @@ print_tocken(p_start_with,p_end_with);
 
 
 
-	ada_kw1 = (k_ABORT|k_ABS|k_ABSTRACT |k_ACCEPT   | k_ACCESS   | k_ALIASED  | k_ALL      | k_AND      | k_ARRAY    | k_AT       | k_BEGIN    | k_BODY     | k_CASE     | k_CONSTANT | k_DECLARE  );
-	ada_kw2= (k_DELAY    k_DELTA    k_DIGITS   k_DO       k_ELSE     k_ELSIF    k_END      k_ENTRY    k_EXCEPTION| k_EXIT     );
-	ada_kw3=(k_FOR      |k_FUNCTION | k_GENERIC  | k_GOTO     | k_IF       | k_IN       | k_IS       | k_LIMITED  | k_LOOP     | k_MOD      | k_NEW      | k_NOT      | k_NULL     | k_OF       | k_OR      );
-	ada_kw4=( k_OTHERS   | k_OUT      | k_PACKAGE  | k_PRAGMA   | k_PRIVATE  | k_PROCEDURE| k_PROTECTED| k_RAISE    | k_RANGE    | k_RECORD   | k_REM      | k_RENAMES  | k_REQUEUE  | k_RETURN   | k_REVERSE  );
-	ada_kw5=( k_SELECT   | k_SEPARATE | k_SUBTYPE  | k_TAGGED   | k_TASK     | k_TERMINATE| k_THEN     | k_TYPE     | k_FOR      | k_FUNCTION | k_GENERIC  | k_GOTO     | k_IF       | k_IN       | k_IS       | k_LIMITED  );
-	ada_kw6=( k_LOOP     | k_MOD      | k_NEW      | k_NOT      | k_NULL     | k_OF       | k_OR       | k_OTHERS   | k_OUT      | k_PACKAGE  | k_PRAGMA   | k_PRIVATE  | k_PROCEDURE| k_PROTECTED| k_RAISE    );
-	ada_kw7=( k_RANGE    | k_RECORD   | k_REM      | k_RENAMES  | k_REQUEUE  | k_RETURN   | k_REVERSE  | k_SELECT   | k_SEPARATE | k_SUBTYPE  | k_TAGGED   | k_TASK     | k_UNTIL    );
-	ada_kw8=( k_USE      | k_WHEN     | k_WHILE    | k_WITH     | k_XOR      );
+	ada_kw1 = (k_ABORT|k_ABS|k_ABSTRACT |k_ACCEPT | k_ACCESS | k_ALIASED | k_ALL | k_AND | k_ARRAY | k_AT | k_BEGIN | k_BODY | k_CASE | k_CONSTANT | k_DECLARE );
+	ada_kw2= (k_DELAY k_DELTA k_DIGITS k_DO k_ELSE k_ELSIF k_END k_ENTRY k_EXCEPTION| k_EXIT );
+	ada_kw3=(k_FOR |k_FUNCTION | k_GENERIC | k_GOTO | k_IF | k_IN | k_IS | k_LIMITED | k_LOOP | k_MOD | k_NEW | k_NOT | k_NULL | k_OF | k_OR );
+	ada_kw4=( k_OTHERS | k_OUT | k_PACKAGE | k_PRAGMA | k_PRIVATE | k_PROCEDURE| k_PROTECTED| k_RAISE | k_RANGE | k_RECORD | k_REM | k_RENAMES | k_REQUEUE | k_RETURN | k_REVERSE );
+	ada_kw5=( k_SELECT | k_SEPARATE | k_SUBTYPE | k_TAGGED | k_TASK | k_TERMINATE| k_THEN | k_TYPE | k_FOR | k_FUNCTION | k_GENERIC | k_GOTO | k_IF | k_IN | k_IS | k_LIMITED );
+	ada_kw6=( k_LOOP | k_MOD | k_NEW | k_NOT | k_NULL | k_OF | k_OR | k_OTHERS | k_OUT | k_PACKAGE | k_PRAGMA | k_PRIVATE | k_PROCEDURE| k_PROTECTED| k_RAISE );
+	ada_kw7=( k_RANGE | k_RECORD | k_REM | k_RENAMES | k_REQUEUE | k_RETURN | k_REVERSE | k_SELECT | k_SEPARATE | k_SUBTYPE | k_TAGGED | k_TASK | k_UNTIL );
+	ada_kw8=( k_USE | k_WHEN | k_WHILE | k_WITH | k_XOR );
 
 	ada_keywords = (ada_kw1 | ada_kw2|ada_kw3|ada_kw4|ada_kw5|ada_kw6|ada_kw7|ada_kw8);
 
@@ -232,15 +232,14 @@ print_tocken(p_start_with,p_end_with);
 	package_name = (("package"i) sp%{p_start_packname = p; } compound_name%{p_end_packname = p; } sp k_IS) @package_name_found;
 	type_name = (k_TYPE sp%{p_start_typename = p; } word%{p_stop_typename = p; }  sp k_IS)  @type_name_found;
 
-	main :=  (ada_comments| with_clause| ada_keywords| package_name |  word | type_name | sp | any)*;
-
+main :=  (ada_comments| with_clause| ada_keywords| package_name |  word | type_name | sp | any)*;
 
 
 }%%
 
 %% write data;
 
-int Concurrent::init( )
+int AdaParser::init( )
 {
 	%% write init;
 	cur_char = 0;
@@ -248,7 +247,7 @@ int Concurrent::init( )
 }
 
 
-int Concurrent::execute( const char *data, int len, bool isEof )
+int AdaParser::execute( const char *data, int len, bool isEof )
 {
 	const char *p = data;
 	const char *pe = data + len;
@@ -257,40 +256,40 @@ int Concurrent::execute( const char *data, int len, bool isEof )
 
 	%% write exec;
 
-	if ( cs == Concurrent_error )
+	if ( cs == AdaParser_error )
 		return -1;
-	if ( cs >= Concurrent_first_final )
+	if ( cs >= AdaParser_first_final )
 		return 1;
 	return 0;
 }
 
-int Concurrent::finish( )
+int AdaParser::finish( )
 {
-	if ( cs == Concurrent_error )
+	if ( cs == AdaParser_error )
 		return -1;
-	if ( cs >= Concurrent_first_final )
+	if ( cs >= AdaParser_first_final )
 		return 1;
 	return 0;
 }
 
 
-Concurrent concurrent;
+AdaParser AdaParser;
 char buf[BUFSIZE];
 
 int main()
 {
-	concurrent.init();
+	AdaParser.init();
 	while ( 1 ) {
 		int len = fread( buf, 1, BUFSIZE, stdin );
-		concurrent.execute( buf, len, len != BUFSIZE );
+		AdaParser.execute( buf, len, len != BUFSIZE );
 		if ( len != BUFSIZE )
 			break;
 	}
 
-	if ( concurrent.finish() <= 0 )
-		cerr << "concurrent: error parsing input" << endl;
+	if ( AdaParser.finish() <= 0 )
+		cerr << "AdaParser: error parsing input" << endl;
 
-	cout << "Read: "<< concurrent.cur_line << endl;
+	cout << "Read: "<< AdaParser.cur_line << endl;
 	return 0;
 }
 
