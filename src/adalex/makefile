@@ -1,6 +1,6 @@
 
 
-all: adalex
+all: adaparse
 
 QT_TOOLS_DIR=../../qtools
 INC_DIR=-I$(QT_TOOLS_DIR)
@@ -57,4 +57,17 @@ adalex: lexer9x.l ada_tockens.h adalex.cpp
 
 
 clean: 
-	rm adalex
+	-rm adalex
+	-rm adaparse
+	-rm out/adaparse.cpp
+
+out/adaparse.cpp: adaparse.rl
+	ragel -o out/adaparse.cpp adaparse.rl
+	ragel -V -o out/adaparse.dot adaparse.rl
+#	dot -Tsvg -o out/adaparse.svg out/adaparse.dot
+#	firefox out/adaparse.svg &
+
+adaparse: out/adaparse.cpp
+	g++ 	$(CXX_OPT) $(INC_DIR)  out/adaparse.cpp -o adaparse 
+	./adaparse < demo_pack.ads
+all: adaparse
