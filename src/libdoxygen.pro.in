@@ -92,6 +92,7 @@ HEADERS      =	arguments.h \
                 fortrancode.h \
                 fortranscanner.h \
                 dbusxmlscanner.h \
+                adaparser.h \
 		qhp.h \
 		qhpxmlwriter.h \
 		reflist.h \
@@ -130,6 +131,7 @@ SOURCES      =	arguments.cpp \
 		context.cpp \
 		cppvalue.cpp \
                 dbusxmlscanner.cpp \
+                adaparser.cpp \
 		debug.cpp \
                 defgen.cpp \
 		define.cpp \

@@ -73,6 +73,7 @@
 #include "pyscanner.h"
 #include "fortranscanner.h"
 #include "dbusxmlscanner.h"
+#include "adaparser.h"
 #include "tclscanner.h"
 #include "code.h"
 #include "objcache.h"
@@ -9135,7 +9136,7 @@ static void copyStyleSheet()
     QFileInfo fi(htmlExtraStyleSheet);
     if (!fi.exists())
     {
-      err("Style sheet '%s' specified by HTML_EXTRA_STYLESHEET does not exist!\n",htmlExtraStyleSheet.data());
+      err("Style sheet '%s' specified by HTML/RA_STYLESHEET does not exist!\n",htmlExtraStyleSheet.data());
       htmlExtraStyleSheet.resize(0); // revert to the default
     }
     else
@@ -9882,6 +9883,8 @@ void initDoxygen()
   Doxygen::parserManager->registerParser("dbusxml", new DBusXMLScanner);
   Doxygen::parserManager->registerParser("tcl",     new TclLanguageScanner);
   Doxygen::parserManager->registerParser("md",      new MarkdownFileParser);
+  Doxygen::parserManager->registerParser("ada",     new AdaFileParser);
+
 
   // register any additional parsers here...
 

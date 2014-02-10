@@ -6851,6 +6851,10 @@ void initDefaultExtensionMapping()
   updateLanguageMapping(".qsf",      "vhdl");
   updateLanguageMapping(".md",       "md");
   updateLanguageMapping(".markdown", "md");
+  updateLanguageMapping(".ads"     , "ada");
+ // updateLanguageMapping(".adb"     , "ada");
+
+
 
   //updateLanguageMapping(".xml",   "dbusxml");
 }
@@ -7844,6 +7848,7 @@ QCString langToString(SrcLangExt lang)
     case SrcLangExt_XML:      return "XML";
     case SrcLangExt_Tcl:      return "Tcl";
     case SrcLangExt_Markdown: return "Markdown";
+    case SrcLangExt_Ada: return "Ada";
   }
   return "Unknown";
 }
