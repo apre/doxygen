@@ -1,8 +1,9 @@
+// objective: test that the @file directive is recognized
+// check: 055__demo__pack_8ads.xml
+
 --! @file
 -- @brief Demonstration package
--- Demonstration package file that demonstrate the mainpage command.
--- \mainpage
--- Text of the mainpage
+-- Demonstration package file
 
 with ada ;
 with Plop;

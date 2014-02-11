@@ -117,18 +117,24 @@ struct AdaParser
 			char * c = Comment_Line;
 			Comment_Line[size_comment] = 0;
 			printf("-- c:(%2d)[--%s",size_comment,c);
-
+ 
 		} else {
 			cerr << "ERROR: Comment Buffer too small" << endl;
 		}
 	}
 
-	action ada_comment_block { cout << "ada comment block"<<endl; }
+	action ada_comment_block { cout << "^^^^^^^^^^^^ ada comment block"<<endl; }
 
-	ada_comment = ('--'%start_ada_comment([^\n]*'\n'%end_ada_comment) ) ;
-	ada_comments = (ada_comment  ada_comment?) ;
+	spc = (" " | "\t");
+	sp = (spc spc*);
+	
+	eol = ("\n" | "\n\r" | "\r\n");
 
-	sp = (" " " "?);
+action finish_comment { cout << "^^^^ end comment " << endl;}
+	
+	ada_comment = ((sp*)'--'%start_ada_comment([^\n\r]*eol%end_ada_comment) ) ;
+	ada_comments = (  ada_comment+ )**%ada_comment_block ;
+
 
 
 
