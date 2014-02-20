@@ -5,7 +5,7 @@
 
 *.rej
 *.orig
-
+/testing/test_output_*
 *.pro
 /.makeconfig
 /.tmakeconfig

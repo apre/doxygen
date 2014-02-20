@@ -12,6 +12,23 @@ using namespace std;
 #define BUFSIZE 2048
 #define COMMENT_SIZE (2*BUFSIZE)
 
+#include "ada_tockens.h"
+
+
+void print_tock(const char* ts, const char * te,int line) {
+	char buffer[512];
+	int size_tocken = te-ts;
+
+	if (size_tocken < 512) {
+	strncpy(buffer,ts,size_tocken);
+	buffer[size_tocken] = 0;
+	printf("%d:[%s]",line,buffer);
+
+	}
+
+}
+
+#define PT print_tock(ts,te,cur_line)
 
 void print_tocken(const char* saved_p, const char* p) {
 	char buffer[50];
@@ -32,6 +49,9 @@ void print_tocken(const char* saved_p, const char* p) {
 
 }
 
+int act;
+
+const char * ts, * te;
 struct AdaParser
 {
 	int cur_line;
@@ -116,27 +136,30 @@ struct AdaParser
 			strncpy(Comment_Line,p_start_comment,size_comment);
 			char * c = Comment_Line;
 			Comment_Line[size_comment] = 0;
-			printf("-- c:(%2d)[--%s",size_comment,c);
- 
+			//--printf("-- c:(%2d)[--%s",size_comment,c);
+
 		} else {
 			cerr << "ERROR: Comment Buffer too small" << endl;
 		}
 	}
 
-	action ada_comment_block { cout << "^^^^^^^^^^^^ ada comment block"<<endl; }
+	action ada_comment_block { ; }
 
 	spc = (" " | "\t");
 	sp = (spc spc*);
-	
-	eol = ("\n" | "\n\r" | "\r\n");
 
-action finish_comment { cout << "^^^^ end comment " << endl;}
-	
-	ada_comment = ((sp*)'--'%start_ada_comment([^\n\r]*eol%end_ada_comment) ) ;
-	ada_comments = (  ada_comment+ )**%ada_comment_block ;
+	eol = ("\n");
+	action begin_comment { cout << "vvvvvv begin comment block" << endl;}
+	action finish_comment { cout << "^^^^ end comment " << endl;}
 
+#	ada_comment = ((sp*)'--'%start_ada_comment([^\n\r]*eol%end_ada_comment) ) ;
+#	ada_comments = (  ada_comment+ )**%ada_comment_block ;
 
+#	ada_comment_line = ((sp*)'--'%start_ada_comment([^\n\r]*eol) )@end_ada_comment;
+#	ada_comment = (ada_comment_line+ ada_comment_line**) %ada_comment_block;
 
+	ada_comment_line = ((sp*)'--'%start_ada_comment((any--eol)*eol) )@end_ada_comment;
+	ada_comment =(ada_comment_line ada_comment_line**)+ %ada_comment_block;
 
 	k_ABORT     = ("ABORT"i);
 	k_ABS       = ("ABS"i);
@@ -227,19 +250,43 @@ action finish_comment { cout << "^^^^ end comment " << endl;}
 	package = ("package"i);
 
 	simple_name = word ;
-
 	compound_name = (word ('.' word )* );
 
 	c_name_list = (compound_name (',' compound_name)*);
 
 	with_clause = k_WITH sp %{p_start_with = p;}  c_name_list%{p_end_with = p;} sp? ';' @with_found;
 
+	identifier = (alpha ('_'?[a-zA-Z0-9])*) ; 
+
 
 	package_name = (("package"i) sp%{p_start_packname = p; } compound_name%{p_end_packname = p; } sp k_IS) @package_name_found;
 	type_name = (k_TYPE sp%{p_start_typename = p; } word%{p_stop_typename = p; }  sp k_IS)  @type_name_found;
 
-main :=  (ada_comments| with_clause| ada_keywords| package_name |  word | type_name | sp | any)*;
+	action eoc {cout << "EOC" <<endl;}
 
+#main :=  (ada_comment| with_clause| ada_keywords| package_name |  word | type_name | sp | any)*;
+
+	integer = digit('_'| digit )*;
+
+main := |*
+
+      ada_keywords { cout << "[";PT;cout << "]";}; 
+      ada_comment_line { cur_line++;PT;};
+      spc {};
+      eol {line_count++;cur_line++;cout  << endl;};
+      identifier {PT;};
+      integer {PT;};
+      "." {cout << ".";};
+      ";" {PT;};
+
+      '(' {PT;};
+      ')' {PT;};
+      '..' {PT;};
+
+
+
+
+    *|;
 
 }%%
 
@@ -249,9 +296,9 @@ int AdaParser::init( )
 {
 	%% write init;
 	cur_char = 0;
+	cur_line = 0;
 	return 1;
 }
-
 
 int AdaParser::execute( const char *data, int len, bool isEof )
 {
@@ -259,8 +306,12 @@ int AdaParser::execute( const char *data, int len, bool isEof )
 	const char *pe = data + len;
 	const char *eof = isEof ? pe : 0;
 
+	int line_count = 0;
+
 
 	%% write exec;
+
+
 
 	if ( cs == AdaParser_error )
 		return -1;
@@ -295,7 +346,7 @@ int main()
 	if ( AdaParser.finish() <= 0 )
 		cerr << "AdaParser: error parsing input" << endl;
 
-	cout << "Read: "<< AdaParser.cur_line << endl;
+	cout << "Read: "<< AdaParser.cur_line << " "   << endl;
 	return 0;
 }
 

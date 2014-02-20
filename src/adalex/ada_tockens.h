@@ -45,6 +45,11 @@ SEP,
  #define EXTERNC extern "C"
  #else
  #define EXTERNC
+
+struct Token {
+	Ada_Tocken_Type_T typ;
+	std::string value; 
+};
 #endif
 
 EXTERNC void push_tocken(Ada_Tocken_Type_T,int line,const char*);
