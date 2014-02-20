@@ -20,9 +20,9 @@ void print_tock(const char* ts, const char * te,int line) {
 	int size_tocken = te-ts;
 
 	if (size_tocken < 512) {
-	strncpy(buffer,ts,size_tocken);
-	buffer[size_tocken] = 0;
-	printf("%d:[%s]",line,buffer);
+		strncpy(buffer,ts,size_tocken);
+		buffer[size_tocken] = 0;
+		printf("%d:[%s]",line,buffer);
 
 	}
 
@@ -266,27 +266,69 @@ struct AdaParser
 
 #main :=  (ada_comment| with_clause| ada_keywords| package_name |  word | type_name | sp | any)*;
 
-	integer = digit('_'| digit )*;
+	integer = digit('_'? digit )*;
+
+	char_string = '"'('"''"'|[^\n\"])*'"';
+
+	exponent = (([eE])'+'?integer);
+	base = integer;
+	extended_digit = alnum;
+	based_integer = extended_digit('_'?extended_digit)*;
+	based_literal = base '#' based_integer ('.' based_integer)? '#' exponent?;
+
+	decimal_literal = integer('.'?integer)?exponent?;
 
 main := |*
 
-      ada_keywords { cout << "[";PT;cout << "]";}; 
+	      ada_keywords { cout << "[";PT;cout << "]";}; 
       ada_comment_line { cur_line++;PT;};
       spc {};
       eol {line_count++;cur_line++;cout  << endl;};
       identifier {PT;};
       integer {PT;};
       "." {cout << ".";};
-      ";" {PT;};
+      "<" { cout <<   "<"   ;};  
+      "(" { cout <<   "("   ;}; 
+      "+" { cout <<   "+"   ;}; 
+      "|" { cout <<   "|"   ;}; 
+      "&" { cout <<   "&"   ;}; 
+      "*" { cout <<   "*"   ;}; 
+      ")" { cout <<   ")"   ;}; 
+      ";" { cout <<   ";"   ;}; 
+      "-" { cout <<   "-"   ;}; 
+      "/" { cout <<   "/"   ;}; 
+      "," { cout <<   ","   ;}; 
+      ">" { cout <<   ">"   ;}; 
+      ":" { cout <<   ":"   ;}; 
+      "=" { cout <<   "="   ;}; 
+      "'" { cout <<   "'"   ;}; 
+      ".." { cout <<   ".."   ;};
+      "<<" { cout <<   "<<"   ;};
+      "<>" { cout <<   "<>"   ;};
+      "<=" { cout <<   "<="   ;};
+      "**" { cout <<   "**"   ;};
+      "/=" { cout <<   "/="   ;};
+      ">>" { cout <<   ">>"   ;};
+      ">=" { cout <<   ">="   ;};
+      ":=" { cout <<   ":="   ;};
+      "=>" { cout <<   "=>"   ;};
 
-      '(' {PT;};
-      ')' {PT;};
+
+
       '..' {PT;};
+      ':=' {PT;};
+
+      char_string {PT;};
+      based_literal {PT;};
+      decimal_literal {PT;};
 
 
 
 
-    *|;
+
+
+      *|;
+
 
 }%%
 

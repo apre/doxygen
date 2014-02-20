@@ -61,7 +61,7 @@ clean:
 	-rm adaparse
 	-rm out/adaparse.cpp
 
-out/adaparse.cpp: adaparse.rl
+out/adaparse.cpp: adaparse.rl demo_pack.ads
 	ragel -o out/adaparse.cpp adaparse.rl
 	ragel -V -o out/adaparse.dot adaparse.rl
 #	dot -Tsvg -o out/adaparse.svg out/adaparse.dot
