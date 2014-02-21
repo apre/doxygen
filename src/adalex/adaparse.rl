@@ -6,13 +6,17 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-
+#include <deque>
 using namespace std;
 
 #define BUFSIZE 2048
 #define COMMENT_SIZE (2*BUFSIZE)
 
 #include "ada_tockens.h"
+
+typedef std::deque<Ada_Tocken_T> Ada_Tocken_List_T;
+
+
 
 
 void print_tock(const char* ts, const char * te,int line) {
@@ -58,6 +62,10 @@ struct AdaParser
 	int cur_char;
 	int start_word;
 	int start_comment;
+
+	/** after lexer pass, the tocken list are stored there. */
+	Ada_Tocken_List_T Tocken_List;
+
 	char const * p_start_comment;
 	char const * p_start_typename;
 	char const * p_stop_typename;
@@ -78,9 +86,15 @@ struct AdaParser
 	int init( );
 	int execute( const char *data, int len, bool isEof );
 	int finish( );
+
+	/**
+push a tocken into the tocken list.
+
+	*/
+	void add_tocken(unsigned int tok_type,const char* ts, const char * te,int line) ;
 };
 
-
+#define AT(x) add_tocken(x,ts,te,cur_line);
 %%{
 	machine AdaParser; 
 
@@ -125,7 +139,8 @@ struct AdaParser
 	}
 
 	action end_ada_comment {
-		long int pi = (long int) p;
+		long int 
+pi = (long int) p;
 
 		int size_comment = p- p_start_comment ;
 		end_comment = cur_char;
@@ -280,47 +295,47 @@ struct AdaParser
 
 main := |*
 
-	      ada_keywords { cout << "[";PT;cout << "]";}; 
-      ada_comment_line { cur_line++;PT;};
+	      ada_keywords { AT(KEYWORD);cout << "[";PT;cout << "]";}; 
+      ada_comment_line {AT(COMMENT); cur_line++;PT;};
       spc {};
       eol {line_count++;cur_line++;cout  << endl;};
-      identifier {PT;};
-      integer {PT;};
-      "." {cout << ".";};
-      "<" { cout <<   "<"   ;};  
-      "(" { cout <<   "("   ;}; 
-      "+" { cout <<   "+"   ;}; 
-      "|" { cout <<   "|"   ;}; 
-      "&" { cout <<   "&"   ;}; 
-      "*" { cout <<   "*"   ;}; 
-      ")" { cout <<   ")"   ;}; 
-      ";" { cout <<   ";"   ;}; 
-      "-" { cout <<   "-"   ;}; 
-      "/" { cout <<   "/"   ;}; 
-      "," { cout <<   ","   ;}; 
-      ">" { cout <<   ">"   ;}; 
-      ":" { cout <<   ":"   ;}; 
-      "=" { cout <<   "="   ;}; 
-      "'" { cout <<   "'"   ;}; 
-      ".." { cout <<   ".."   ;};
-      "<<" { cout <<   "<<"   ;};
-      "<>" { cout <<   "<>"   ;};
-      "<=" { cout <<   "<="   ;};
-      "**" { cout <<   "**"   ;};
-      "/=" { cout <<   "/="   ;};
-      ">>" { cout <<   ">>"   ;};
-      ">=" { cout <<   ">="   ;};
-      ":=" { cout <<   ":="   ;};
-      "=>" { cout <<   "=>"   ;};
+      identifier {AT(IDENTIFIER);PT;};
+      integer {AT(INTEGER);PT;};
+      "." { AT('.');cout << ".";};
+      "<" { AT('<');cout <<   "<"   ;};  
+      "(" {  AT('(');   cout <<   "("   ;}; 
+      "+" {  AT('+');   cout <<   "+"   ;}; 
+      "|" {  AT('|');   cout <<   "|"   ;}; 
+      "&" {  AT('&');   cout <<   "&"   ;}; 
+      "*" {  AT('*');   cout <<   "*"   ;}; 
+      ")" {  AT(')');   cout <<   ")"   ;}; 
+      ";" {  AT(';');   cout <<   ";"   ;}; 
+      "-" {  AT('-');   cout <<   "-"   ;}; 
+      "/" {  AT('/');   cout <<   "/"   ;}; 
+      "," {  AT(',');   cout <<   ","   ;}; 
+      ">" {  AT('>');   cout <<   ">"   ;}; 
+      ":" {  AT(':');   cout <<   ":"   ;}; 
+      "=" {  AT('=');   cout <<   "="   ;}; 
+      "'" {  AT('\'');   cout <<   "'"   ;}; 
+      ".." {AT(RANGE); cout <<   ".."   ;};
+      "<<" {AT(SHIFT_LEFT); cout <<   "<<"   ;};
+      "<>" {AT(NEQ); cout <<   "<>"   ;};
+      "<=" {AT(LTEQ) cout <<   "<="   ;};
+      "**" {AT(POWER); cout <<   "**"   ;};
+      "/=" {AT(NEQ); cout <<   "/="   ;};
+      ">>" {AT(SHIFT_RIGHT); cout <<   ">>"   ;};
+      ">=" {AT(GTEQ); cout <<   ">="   ;};
+      ":=" {AT(ASSIGN); cout <<   ":="   ;};
+      "=>" {AT(ARROW); cout <<   "=>"   ;};
 
 
 
-      '..' {PT;};
+     # '..' {PT;};
       ':=' {PT;};
 
-      char_string {PT;};
-      based_literal {PT;};
-      decimal_literal {PT;};
+      char_string {AT(CHAR_LIT);PT;};
+      based_literal {AT(BASED_LITERAL);PT;};
+      decimal_literal {AT(DECIMAL_LITERAL);PT;};
 
 
 
@@ -342,6 +357,33 @@ int AdaParser::init( )
 	return 1;
 }
 
+void AdaParser::add_tocken(unsigned int tok_type,const char* ts, const char * te,int line)  {
+	
+	Ada_Tocken_T t;
+	char buffer[512];
+	int size_tocken = te-ts;
+
+	if (size_tocken < 512) {
+	strncpy(buffer,ts,size_tocken);
+	buffer[size_tocken] = 0;
+
+
+} else {
+	printf("Error: %d (too big tocken)\n");
+}
+
+	t.value = buffer;
+	t.line = line;
+	t.type = tok_type;
+
+
+	///t.type = tc;
+	//t.text = value;
+	//	t.line = line;
+
+	Tocken_List.push_back(t);
+
+}
 int AdaParser::execute( const char *data, int len, bool isEof )
 {
 	const char *p = data;
@@ -372,25 +414,55 @@ int AdaParser::finish( )
 }
 
 
-AdaParser AdaParser;
+AdaParser AdaParserMachine;
 char buf[BUFSIZE];
 
-int main()
+int main(int argc, char* argv[])
 {
-	AdaParser.init();
+	int i;
+	FILE * f;
+	int file_read = 0;
+	for (i=0;i<argc;i++) {
+		printf("%d:%s\n",i,argv[i]);
+	}
+	cout << "argc: " << argc <<endl;
+	f = NULL;
+	if (argc==2) {
+		printf("fopen\n");
+		file_read = 1;
+
+		cout << "fopen   fin " <<endl;
+		f = fopen(argv[1],"r");	
+	}
+
+	AdaParserMachine.init();
 	while ( 1 ) {
-		int len = fread( buf, 1, BUFSIZE, stdin );
-		AdaParser.execute( buf, len, len != BUFSIZE );
+		int len;
+		if (file_read) {
+			printf("fread\n");
+			len = fread( buf, 1, BUFSIZE, f );
+		} else {
+			cout << "stdin" << endl;
+			len = fread( buf, 1, BUFSIZE, stdin );
+		}
+		//int len = fread( buf, 1, BUFSIZE, stdin );
+		AdaParserMachine.execute( buf, len, len != BUFSIZE );
 		if ( len != BUFSIZE )
 			break;
 	}
 
-	if ( AdaParser.finish() <= 0 )
+	if (file_read) {
+		fclose(f);
+	}
+
+	if ( AdaParserMachine.finish() <= 0 )
 		cerr << "AdaParser: error parsing input" << endl;
 
-	cout << "Read: "<< AdaParser.cur_line << " "   << endl;
+
+
+	cout << "Read: "<< AdaParserMachine.cur_line << " lines, " << AdaParserMachine.Tocken_List.size() << " tockens"  << endl;
 	return 0;
 }
 
 
-// vim: syntax=ragel 
+// vim: smartindent syntax=ragel :
