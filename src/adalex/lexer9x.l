@@ -43,7 +43,7 @@ BASED_LITERAL           {BASE}#{BASED_INTEGER}(\.{BASED_INTEGER})?#{EXPONENT}?
 ";"                      {push_tocken(SEMI_COLUMN,Ada_lexline,yytext);}  
 "-"                      {push_tocken(MINUS,Ada_lexline,yytext);}  
 "/"                      {push_tocken(SLASH,Ada_lexline,yytext);}  
-",Ada_lexline,"                      {push_tocken(COMA,Ada_lexline,yytext);}  
+","                      {push_tocken(COMA,Ada_lexline,yytext);}  
 ">"                      {push_tocken(GT,Ada_lexline,yytext);}  
 ":"                      {push_tocken(COLUN,Ada_lexline,yytext);}  
 "="                      {push_tocken(EQUAL,Ada_lexline,yytext);}  

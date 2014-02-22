@@ -1,20 +1,17 @@
 /*
- * Show off AdaParser abilities.
+ * Show off AdaLexer abilities.
  */
 
 #include <iostream>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <deque>
 using namespace std;
 
-#define BUFSIZE 2048
-#define COMMENT_SIZE (2*BUFSIZE)
+
 
 #include "ada_tockens.h"
 
-typedef std::deque<Ada_Tocken_T> Ada_Tocken_List_T;
 
 
 
@@ -56,55 +53,9 @@ void print_tocken(const char* saved_p, const char* p) {
 int act;
 
 const char * ts, * te;
-struct AdaParser
-{
-	int cur_line;
-	int cur_char;
-	int start_word;
-	int start_comment;
-
-	/** after lexer pass, the tocken list are stored there. */
-	Ada_Tocken_List_T Tocken_List;
-
-	char const * p_start_comment;
-	char const * p_start_typename;
-	char const * p_stop_typename;
-	char const * p_start_ident;
-	char const * p_end_ident;
-	char const * p_start_packname;
-	char const * p_end_packname;
-	char const * p_start_with;
-	char const * p_end_with;
-	char const * p_start_;
-	char const * p_end_;
-	int end_comment;
-	int start_literal;
-
-	char Comment_Line[COMMENT_SIZE];
-	int cs;
-
-	/** size of the buffer used to extract the tocken.
-	  It must be big enought to hold a full comment line.
-	 */
-#define TMP_BUF_SIZE 512
-
-	/** buffer that temporary holds the tocken value before conversion into std::string */
-	char tmp_buffer[TMP_BUF_SIZE];
-
-	int init( );
-	int execute( const char *data, int len, bool isEof );
-	int finish( );
-
-	/**
-	  push a tocken into the tocken list.
-
-	 */
-	void add_tocken(unsigned int token_id,const char* ts, const char * te,int line) ;
-};
-
 #define AT(x) add_tocken(x,ts,te,cur_line);
 %%{
-	machine AdaParser; 
+	machine AdaLexer; 
 
 	action package_name_found {
 		cout << "package name found: ";
@@ -327,7 +278,7 @@ main := |*
       "'" {  AT('\'');   cout <<   "'"   ;}; 
       ".." {AT(RANGE); cout <<   ".."   ;};
       "<<" {AT(SHIFT_LEFT); cout <<   "<<"   ;};
-      "<>" {AT(NEQ); cout <<   "<>"   ;};
+      "<>" {AT(DIFFERENT); cout <<   "<>"   ;};
       "<=" {AT(LTEQ) cout <<   "<="   ;};
       "**" {AT(POWER); cout <<   "**"   ;};
       "/=" {AT(NEQ); cout <<   "/="   ;};
@@ -357,7 +308,7 @@ main := |*
 
 %% write data;
 
-int AdaParser::init( )
+int AdaLexer::init( )
 {
 	%% write init;
 	cur_char = 0;
@@ -365,19 +316,19 @@ int AdaParser::init( )
 	return 1;
 }
 
-void AdaParser::add_tocken(unsigned int token_id,const char* ts, const char * te,int line)  {
+void AdaLexer::add_tocken(unsigned int token_id,const char* ts, const char * te,int line)  {
 
 	Ada_Tocken_T t;
-	char tmp_buffer[TMP_BUF_SIZE];
+	char tmp_buffer[ADA_LEX_TMP_BUF_SIZE];
 	int size_tocken = te-ts;
 
-	if (size_tocken < TMP_BUF_SIZE) {
+	if (size_tocken < ADA_LEX_TMP_BUF_SIZE) {
 		strncpy(tmp_buffer,ts,size_tocken);
 		tmp_buffer[size_tocken] = 0;
 
 
 	} else {
-		printf("Error: %d (too big tocken)\n");
+		printf("Error: %d (too big tocken)\n",size_tocken);
 	}
 
 	t.value = tmp_buffer;
@@ -392,7 +343,7 @@ void AdaParser::add_tocken(unsigned int token_id,const char* ts, const char * te
 	Tocken_List.push_back(t);
 
 }
-int AdaParser::execute( const char *data, int len, bool isEof )
+int AdaLexer::execute( const char *data, int len, bool isEof )
 {
 	const char *p = data;
 	const char *pe = data + len;
@@ -406,72 +357,26 @@ int AdaParser::execute( const char *data, int len, bool isEof )
 
 
 
-	if ( cs == AdaParser_error )
+	if ( cs == AdaLexer_error )
 		return -1;
-	if ( cs >= AdaParser_first_final )
+	if ( cs >= AdaLexer_first_final )
 		return 1;
 	return 0;
 }
 
-int AdaParser::finish( )
+int AdaLexer::finish( )
 {
-	if ( cs == AdaParser_error )
+	if ( cs == AdaLexer_error )
 		return -1;
-	if ( cs >= AdaParser_first_final )
+	if ( cs >= AdaLexer_first_final )
 		return 1;
 	return 0;
 }
 
 
-AdaParser AdaParserMachine;
-char buf[BUFSIZE];
-
-int main(int argc, char* argv[])
-{
-	int i;
-	FILE * f;
-	int file_read = 0;
-	for (i=0;i<argc;i++) {
-		printf("%d:%s\n",i,argv[i]);
-	}
-	cout << "argc: " << argc <<endl;
-	f = NULL;
-	if (argc==2) {
-		printf("fopen\n");
-		file_read = 1;
-
-		cout << "fopen   fin " <<endl;
-		f = fopen(argv[1],"r");	
-	}
-
-	AdaParserMachine.init();
-	while ( 1 ) {
-		int len;
-		if (file_read) {
-			printf("fread\n");
-			len = fread( buf, 1, BUFSIZE, f );
-		} else {
-			cout << "stdin" << endl;
-			len = fread( buf, 1, BUFSIZE, stdin );
-		}
-		//int len = fread( buf, 1, BUFSIZE, stdin );
-		AdaParserMachine.execute( buf, len, len != BUFSIZE );
-		if ( len != BUFSIZE )
-			break;
-	}
-
-	if (file_read) {
-		fclose(f);
-	}
-
-	if ( AdaParserMachine.finish() <= 0 )
-		cerr << "AdaParser: error parsing input" << endl;
 
 
 
-	cout << "Read: "<< AdaParserMachine.cur_line << " lines, " << AdaParserMachine.Tocken_List.size() << " tockens"  << endl;
-	return 0;
-}
 
 
 // vim: smartindent syntax=ragel :
