@@ -72,7 +72,7 @@ EXTERNC void push_tocken(Ada_Tocken_Type_T,int line,const char*);
 /** describe an Ada tocken read from the source file.*/
 struct Ada_Tocken_T {
 	/** type identifier of the tockenn */
-	unsigned int  type;
+	int  tockenId;
 	/** tocken value*/
 	std::string value;
 	/** line number where the tocken has been found*/

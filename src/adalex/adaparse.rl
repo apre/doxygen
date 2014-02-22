@@ -83,15 +83,23 @@ struct AdaParser
 	char Comment_Line[COMMENT_SIZE];
 	int cs;
 
+	/** size of the buffer used to extract the tocken.
+	  It must be big enought to hold a full comment line.
+	 */
+#define TMP_BUF_SIZE 512
+
+	/** buffer that temporary holds the tocken value before conversion into std::string */
+	char tmp_buffer[TMP_BUF_SIZE];
+
 	int init( );
 	int execute( const char *data, int len, bool isEof );
 	int finish( );
 
 	/**
-push a tocken into the tocken list.
+	  push a tocken into the tocken list.
 
-	*/
-	void add_tocken(unsigned int tok_type,const char* ts, const char * te,int line) ;
+	 */
+	void add_tocken(unsigned int token_id,const char* ts, const char * te,int line) ;
 };
 
 #define AT(x) add_tocken(x,ts,te,cur_line);
@@ -140,7 +148,7 @@ push a tocken into the tocken list.
 
 	action end_ada_comment {
 		long int 
-pi = (long int) p;
+			pi = (long int) p;
 
 		int size_comment = p- p_start_comment ;
 		end_comment = cur_char;
@@ -330,7 +338,7 @@ main := |*
 
 
 
-     # '..' {PT;};
+# '..' {PT;};
       ':=' {PT;};
 
       char_string {AT(CHAR_LIT);PT;};
@@ -357,24 +365,24 @@ int AdaParser::init( )
 	return 1;
 }
 
-void AdaParser::add_tocken(unsigned int tok_type,const char* ts, const char * te,int line)  {
-	
+void AdaParser::add_tocken(unsigned int token_id,const char* ts, const char * te,int line)  {
+
 	Ada_Tocken_T t;
-	char buffer[512];
+	char tmp_buffer[TMP_BUF_SIZE];
 	int size_tocken = te-ts;
 
-	if (size_tocken < 512) {
-	strncpy(buffer,ts,size_tocken);
-	buffer[size_tocken] = 0;
+	if (size_tocken < TMP_BUF_SIZE) {
+		strncpy(tmp_buffer,ts,size_tocken);
+		tmp_buffer[size_tocken] = 0;
 
 
-} else {
-	printf("Error: %d (too big tocken)\n");
-}
+	} else {
+		printf("Error: %d (too big tocken)\n");
+	}
 
-	t.value = buffer;
+	t.value = tmp_buffer;
 	t.line = line;
-	t.type = tok_type;
+	t.tockenId = token_id;
 
 
 	///t.type = tc;
@@ -391,6 +399,7 @@ int AdaParser::execute( const char *data, int len, bool isEof )
 	const char *eof = isEof ? pe : 0;
 
 	int line_count = 0;
+
 
 
 	%% write exec;
