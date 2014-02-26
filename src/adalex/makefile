@@ -71,3 +71,6 @@ adalexer: out/adalexer.cpp tadalexer.cpp
 	g++ 	$(CXX_OPT) $(INC_DIR)  tadalexer.cpp out/adalexer.cpp -o adalexer 
 	./adalexer < demo_pack.ads
 all: adalexer
+
+test:
+	./adalexer demo_pack.ads

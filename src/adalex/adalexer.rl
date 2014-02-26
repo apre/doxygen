@@ -93,7 +93,7 @@ const char * ts, * te;
 	}
 
 	action start_ada_comment {
-		long int pi = (long int) p;
+		long intpi = (long int) p;
 		p_start_comment = p;
 	}
 
@@ -255,6 +255,8 @@ const char * ts, * te;
 main := |*
 
 	      ada_keywords { AT(KEYWORD);cout << "[";PT;cout << "]";}; 
+#	"with"i sp c_name_list sp? ';' {cout << "WITH found " << endl;} ;
+with_clause;
       ada_comment_line {AT(COMMENT); cur_line++;PT;};
       spc {};
       eol {line_count++;cur_line++;cout  << endl;};
