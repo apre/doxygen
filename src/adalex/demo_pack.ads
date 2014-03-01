@@ -41,4 +41,7 @@ package demo_pack.types is
 	Tres_Gros_Nombre : Positive := 123_456_789;
 
 	Float_number : constant Float := 123.6548;
+-- This is end of demo_pack unit  
+	-- a multi comment block
+	-- in multi line is complicated. 
 end demo_pack;

@@ -9,10 +9,7 @@
 using namespace std;
 
 
-
 #include "ada_tockens.h"
-
-
 
 
 
@@ -57,74 +54,109 @@ const char * ts, * te;
 %%{
 	machine AdaLexer; 
 
-	action package_name_found {
-		cout << "package name found: ";
-		//printf("p:%s\n",p);
-		print_tocken(p_start_packname,p_end_packname);
-	}
-
-	action save_p{
-		//	pp = p; cout << p << endl;
-		;
-	}
+# Error machine, consumes to end of 
+# line, then starts the main line over.
+	garble_line := (
+			     (any-'\n')*'\n'
+	       ) >{cout << "error: garbling line" << endl;} @{fgoto main;};
 
 
-	action with_found {
-		cout << "with found : " ;
-		print_tocken(p_start_with,p_end_with);
-	}
-	action package_found {
-		cout << "package found" << endl;
-		//printf("p:%s\n",p);
-	}
 
-	action type_found {
-		cout << "type found"<<endl;
-	}
 
-	action type_name_found {
-		cout << "type name found:  ";
-		print_tocken(p_start_typename,p_stop_typename);
-	}
-	action identifier_found {
+	     action package_name_found {
+		     cout << "package name found: ";
+		     //printf("p:%s\n",p);
+		     print_tocken(p_start_packname,p_end_packname);
+	     }
 
-		print_tocken(p_start_ident,p);
+	     action save_p{
+		     //	pp = p; cout << p << endl;
+		     ;
+	     }
 
-	}
 
-	action start_ada_comment {
-		long intpi = (long int) p;
-		p_start_comment = p;
-	}
+	     action with_found {
+		     cout << "with found : " ;
+		     print_tocken(p_start_with,p_end_with);
+	     }
+	     action package_found {
+		     cout << "package found" << endl;
+		     //printf("p:%s\n",p);
+	     }
 
-	action end_ada_comment {
-		long int 
-			pi = (long int) p;
+	     action type_found {
+		     cout << "type found"<<endl;
+	     }
 
-		int size_comment = p- p_start_comment ;
-		end_comment = cur_char;
-		//cout << "end ada comment " << pi  << endl; 
+	     action type_name_found {
+		     cout << "type name found:  ";
+		     print_tocken(p_start_typename,p_stop_typename);
+	     }
+	     action identifier_found {
 
-		if (size_comment < COMMENT_SIZE) {
+		     print_tocken(p_start_ident,p);
 
-			strncpy(Comment_Line,p_start_comment,size_comment);
-			char * c = Comment_Line;
-			Comment_Line[size_comment] = 0;
-			//--printf("-- c:(%2d)[--%s",size_comment,c);
+	     }
 
-		} else {
-			cerr << "ERROR: Comment Buffer too small" << endl;
-		}
-	}
+	     action start_ada_comment {
+		     long intpi = (long int) p;
+		     p_start_comment = p;
+	     }
 
-	action ada_comment_block { ; }
+	     action end_ada_comment {
+		     long int 
+			     pi = (long int) p;
 
-	spc = (" " | "\t");
-	sp = (spc spc*);
+		     int size_comment = p- p_start_comment ;
+		     end_comment = cur_char;
+		     //cout << "end ada comment " << pi  << endl; 
 
-	eol = ("\n");
-	action begin_comment { cout << "vvvvvv begin comment block" << endl;}
-	action finish_comment { cout << "^^^^ end comment " << endl;}
+		     if (size_comment < COMMENT_SIZE) {
+
+			     strncpy(Comment_Line,p_start_comment,size_comment);
+			     char * c = Comment_Line;
+			     Comment_Line[size_comment] = 0;
+			     printf("-- c:(%2d)[--%s",size_comment,c);
+
+		     } else {
+			     cerr << "ERROR: Comment Buffer too small" << endl;
+		     }
+		     cout << "fret" <<endl;
+
+		     //fret;
+	     }
+	     action end_ada_comment_retmain {
+		     long int 
+			     pi = (long int) p;
+
+		     int size_comment = p- p_start_comment ;
+		     end_comment = cur_char;
+		     //cout << "end ada comment " << pi  << endl; 
+
+		     if (size_comment < COMMENT_SIZE) {
+
+			     strncpy(Comment_Line,p_start_comment,size_comment);
+			     char * c = Comment_Line;
+			     Comment_Line[size_comment] = 0;
+			     printf("c:(%2d)[%s",size_comment,c);
+
+		     } else {
+			     cerr << "ERROR: Comment Buffer too small" << endl;
+		     }
+		     cout << "retmain l:" << line_count <<endl;
+		fhold;
+		     fgoto main;
+	     }
+
+	     action ada_comment_block { ; }
+
+	     spc = (" " | "\t");
+	     sp = (spc spc*);
+
+	     eol = ("\n"|'\r\n');
+	     action begin_comment { cout << "vvvvvv begin comment block" << endl;}
+	     action finish_comment { cout << "^^^^ end comment " << endl;}
+
 
 #	ada_comment = ((sp*)'--'%start_ada_comment([^\n\r]*eol%end_ada_comment) ) ;
 #	ada_comments = (  ada_comment+ )**%ada_comment_block ;
@@ -132,9 +164,15 @@ const char * ts, * te;
 #	ada_comment_line = ((sp*)'--'%start_ada_comment([^\n\r]*eol) )@end_ada_comment;
 #	ada_comment = (ada_comment_line+ ada_comment_line**) %ada_comment_block;
 
-	ada_comment_line = ((sp*)'--'%start_ada_comment((any--eol)*eol) )@end_ada_comment;
-	ada_comment =(ada_comment_line ada_comment_line**)+ %ada_comment_block;
+#	     ada_comment_line = ((sp*)'--'%start_ada_comment((any--eol)*eol) )@end_ada_comment;
+#	     ada_comment =(ada_comment_line ada_comment_line**)+ %ada_comment_block;
 
+comment_line := (space*"--"/[^\n]*\n/>{line_count++;cur_line++;})*  $!end_ada_comment_retmain;
+#eat_comment := ((any - eol)**eol (sp* "--" (any - eol)**eol)**)  @end_ada_comment;
+eat_comment :=  (/[^\n]*\n/>{line_count++;cur_line++;})@{fcall comment_line;};
+
+
+# ada Keywords {{{
 	k_ABORT     = ("ABORT"i);
 	k_ABS       = ("ABS"i);
 	k_ABSTRACT  = ("ABSTRACT"i);
@@ -217,7 +255,7 @@ const char * ts, * te;
 	ada_kw8=( k_USE | k_WHEN | k_WHILE | k_WITH | k_XOR );
 
 	ada_keywords = (ada_kw1 | ada_kw2|ada_kw3|ada_kw4|ada_kw5|ada_kw6|ada_kw7|ada_kw8);
-
+# }}}
 
 	word = ((alpha('_'?alnum)*) );
 
@@ -256,9 +294,10 @@ main := |*
 
 	      ada_keywords { AT(KEYWORD);cout << "[";PT;cout << "]";}; 
 #	"with"i sp c_name_list sp? ';' {cout << "WITH found " << endl;} ;
-with_clause;
-      ada_comment_line {AT(COMMENT); cur_line++;PT;};
+      with_clause;
+#      ada_comment_line {AT(COMMENT); cur_line++;PT;};
       spc {};
+      "--"=> {fhold;p_start_comment = p;fcall eat_comment; };
       eol {line_count++;cur_line++;cout  << endl;};
       identifier {AT(IDENTIFIER);PT;};
       integer {AT(INTEGER);PT;};
@@ -303,7 +342,8 @@ with_clause;
 
 
 
-      *|;
+      *| ;
+     # $!{fhold; fgoto garble_line;};
 
 
 }%%
@@ -337,10 +377,6 @@ void AdaLexer::add_tocken(unsigned int token_id,const char* ts, const char * te,
 	t.line = line;
 	t.tockenId = token_id;
 
-
-	///t.type = tc;
-	//t.text = value;
-	//	t.line = line;
 
 	Tocken_List.push_back(t);
 
@@ -381,4 +417,4 @@ int AdaLexer::finish( )
 
 
 
-// vim: smartindent syntax=ragel :
+// vim: fdm=marker smartindent syntax=ragel :

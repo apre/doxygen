@@ -114,7 +114,12 @@ struct AdaLexer
 	int start_literal;
 
 	char Comment_Line[COMMENT_SIZE];
-	int cs;
+	
+	/* ragel specific state manchine vars */
+	
+	int cs,top,stack[64];
+
+
 
 	/** size of the buffer used to extract the tocken.
 	  It must be big enought to hold a full comment line.

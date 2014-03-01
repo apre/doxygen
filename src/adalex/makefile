@@ -52,8 +52,8 @@ CXX_OPT=-pipe -fsigned-char -DQT_LITE_UNICODE -D_LARGEFILE_SOURCE -Wall -W -O2 -
 adalex: lexer9x.l ada_tockens.h adalex.cpp
 #	yacc -d grammar9x.y
 	flex -8 -PAdaLexYY -o adalex_gen.c lexer9x.l
-	gcc $(INC_DIR) -c adalex_gen.c  -o adalex_gen.o
-	g++ 	$(CXX_OPT) $(INC_DIR)  adalex.cpp adalex_gen.o  -o adalex
+	ccache gcc $(INC_DIR) -c adalex_gen.c  -o adalex_gen.o
+	ccache g++ 	$(CXX_OPT) $(INC_DIR)  adalex.cpp adalex_gen.o  -o adalex
 
 
 clean: 
@@ -68,7 +68,7 @@ out/adalexer.cpp: adalexer.rl demo_pack.ads
 #	firefox out/adalexer.svg &
 
 adalexer: out/adalexer.cpp tadalexer.cpp
-	g++ 	$(CXX_OPT) $(INC_DIR)  tadalexer.cpp out/adalexer.cpp -o adalexer 
+	ccache g++ 	$(CXX_OPT) $(INC_DIR)  tadalexer.cpp out/adalexer.cpp -o adalexer 
 	./adalexer < demo_pack.ads
 all: adalexer
 
