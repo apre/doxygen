@@ -2,7 +2,7 @@
  *
  *
  *
- * Copyright (C) 2014 by APRE <adrienpre+dox @at@ gmail.com>
+ * Copyright (C) 2009 by Tobias Hunger <tobias@aquazul.com>
  *
  * Permission to use, copy, modify, and distribute this software and its
  * documentation under the terms of the GNU General Public License is hereby
@@ -23,7 +23,6 @@
 #include <qfile.h>
 #include <qxml.h>
 #include <qstring.h>
-#include <iostream>
 
 #include "message.h"
 #include "util.h"
@@ -70,15 +69,13 @@ AdaFileParser::AdaFileParser()
 
 AdaFileParser::~AdaFileParser()
 { }
-using namespace std;
+
 void AdaFileParser::parseInput(const char * fileName,
                                 const char * /* fileBuf */,
                                 Entry *root,
                                 bool /*sameTranslationUnit*/,
                                 QStrList & /*filesInSameTranslationUnit*/)
 {
-	cout << "===================================ParseInput( " <<fileName << endl;
-	printf("ParseInput have been called \n");
 
 }
 
@@ -99,10 +96,7 @@ void AdaFileParser::parseCode(CodeOutputInterface & /* codeOutIntf */,
                                bool /*showLineNumbers*/,
                                Definition * /* searchCtx */,
                                bool /*collectXRefs*/ )
-{
-
-	cout << "========================================ParseCode( " <<")" << endl;
-}
+{ }
 
 void AdaFileParser::resetCodeParserState()
 { }
