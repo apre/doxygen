@@ -336,6 +336,7 @@ int guessSection(const char *name)
       n.right(4)==".h++" ||
       n.right(4)==".idl" ||
       n.right(4)==".ddl" ||
+      n.right(4)==".ads" ||
       n.right(5)==".pidl"
      ) return Entry::HEADER_SEC;
   return 0;
