@@ -6783,6 +6783,7 @@ g_lang2extMap[] =
   { "dbusxml",     "dbusxml", SrcLangExt_XML      },
   { "tcl",         "tcl",     SrcLangExt_Tcl      },
   { "md",          "md",      SrcLangExt_Markdown },
+  { "ada",          "ada",    SrcLangExt_Ada },
   { 0,             0,        (SrcLangExt)0        }
 };
 

@@ -1396,6 +1396,7 @@ void Config::check()
     filePatternList.append("*.tcl");
     filePatternList.append("*.md");
     filePatternList.append("*.markdown");
+    filePatternList.append("*.ads");
     if (portable_fileSystemIsCaseSensitive())
     {
       // unix => case sensitive match => also include useful uppercase versions
@@ -1420,6 +1421,7 @@ void Config::check()
       filePatternList.append("*.TCL");
       filePatternList.append("*.MD");
       filePatternList.append("*.MARKDOWN");
+      filePatternList.append("*.ADS");
     }
   }
 

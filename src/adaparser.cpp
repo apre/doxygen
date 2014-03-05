@@ -2,7 +2,7 @@
  *
  *
  *
- * Copyright (C) 2009 by Tobias Hunger <tobias@aquazul.com>
+ * Copyright (C) 2014 by Adrien PRE <adrienpre+doxygen @ at @ gmail.com>
  *
  * Permission to use, copy, modify, and distribute this software and its
  * documentation under the terms of the GNU General Public License is hereby
@@ -27,36 +27,9 @@
 #include "message.h"
 #include "util.h"
 #include "arguments.h"
+#include <iostream>
+using namespace std;
 
-// -----------------------------------------------------------------------
-// Convenience defines:
-// -----------------------------------------------------------------------
-
-#define CONDITION(cond, msg) \
-    do {\
-        if (cond)\
-        {\
-            if (m_errorString.isEmpty()) { m_errorString = msg; }\
-            return false;\
-        }\
-    }\
-    while (0)
-
-#define DOC_ERROR(msg) \
-    warn_doc_error(m_fileName.data(), lineNumber(), msg.data())
-
-#define COND_DOC_ERROR(cond, msg) \
-    do {\
-        if (cond)\
-        {\
-             DOC_ERROR(msg);\
-             return true;\
-        }\
-    }\
-    while (0)
-
-#define DBUS(name) isDBusElement(namespaceURI, localName, qName, name)
-#define EXTENSION(name) isExtensionElement(namespaceURI, localName, qName, name)
 
 
 
@@ -76,7 +49,7 @@ void AdaFileParser::parseInput(const char * fileName,
                                 bool /*sameTranslationUnit*/,
                                 QStrList & /*filesInSameTranslationUnit*/)
 {
-
+	printf("AdaFileParser::parseInput(%s)\n",fileName);
 }
 
 bool AdaFileParser::needsPreprocessing(const QCString & /* extension */)
@@ -96,7 +69,10 @@ void AdaFileParser::parseCode(CodeOutputInterface & /* codeOutIntf */,
                                bool /*showLineNumbers*/,
                                Definition * /* searchCtx */,
                                bool /*collectXRefs*/ )
-{ }
+{
+	printf("AdaFileParser::ParseCode)\n");
+
+}
 
 void AdaFileParser::resetCodeParserState()
 { }
