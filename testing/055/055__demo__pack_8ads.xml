@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="">
+  <compounddef id="055__demo__pack_8ads" kind="file">
+    <compoundname>055_demo_pack.ads</compoundname>
+    <sectiondef kind="var">
+      <memberdef kind="variable" id="055__demo__pack_8ads_1a0645904c5b3654183abc477645802ba0" prot="public" static="no" mutable="no">
+        <type>file brief Demonstration package Demonstration package file with</type>
+        <definition>file brief Demonstration package Demonstration package file with ada</definition>
+        <argsstring/>
+        <name>ada</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="055_demo_pack.ads" bodystart="8" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="055__demo__pack_8ads_1af22f02cc4ee118ca63e10d32504de5e9" prot="public" static="no" mutable="no">
+        <type>with</type>
+        <definition>with Plop</definition>
+        <argsstring/>
+        <name>Plop</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="055_demo_pack.ads" bodystart="9" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="055__demo__pack_8ads_1a5ef036b60ac9e54b527c07cacdbdff40" prot="public" static="no" mutable="no">
+        <type>with Plop plop</type>
+        <definition>with Plop plop plop</definition>
+        <argsstring/>
+        <name>plop</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="055_demo_pack.ads" bodystart="10" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="055__demo__pack_8ads_1a285ca2a1d0131bfb14e270049c40ef64" prot="public" static="no" mutable="no">
+        <type>with IO stream</type>
+        <definition>with IO stream console</definition>
+        <argsstring/>
+        <name>console</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="055_demo_pack.ads" bodystart="11" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="055__demo__pack_8ads_1a598166b6e7935f07625d759285206ace" prot="public" static="no" mutable="no">
+        <type>package demo_pack types is!Type for representation of the Age of a human type Age_T is</type>
+        <definition>brief Speed representation for a bike This is a integer range typE Speed_T is range</definition>
+        <argsstring/>
+        <name>range</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="055_demo_pack.ads" bodystart="17" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="055__demo__pack_8ads_1a5ed93dbf0d953997d9583d33f69bc3ac" prot="public" static="no" mutable="no">
+        <type>end</type>
+        <definition>end demo_pack</definition>
+        <argsstring/>
+        <name>demo_pack</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="055_demo_pack.ads" bodystart="28" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="055_demo_pack.ads"/>
+  </compounddef>
+</doxygen>
