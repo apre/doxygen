@@ -8069,9 +8069,11 @@ bool mkDirTree(QDir const & targetDir) {
         //msg("mkDirTree CREATE PARENT: [%s]\n",parentDir.absPath().data());
         mkDirTree(parentDir);
     }
-    // msg("mkDirTree CREATE SOON: mkdir [%s] from [%s]\n",
+    /*
+     *  msg("mkDirTree CREATE SOON: mkdir [%s] from [%s]\n",
     targetDir.dirName().data(),
             parentDir.absPath().data());
+    */
 
     return parentDir.mkdir(targetDir.dirName());
 }
@@ -8117,7 +8119,7 @@ bool copyDirectory(const QCString &srcDir,const QCString &destinationDir)
       This string will we removed from the src-fill path after recursive lookup
       to build the target filename.
     */
-    QString srcDirName(srcDirInfo.absPath().data());
+    QString srcDirName(QDir::cleanDirPath(srcDirInfo.absPath().data() + QString("/..")));
 
     /* we now have a list of files.
      * wee need to find the target filename based of destinationDir and srcDir as root.
@@ -8136,14 +8138,14 @@ bool copyDirectory(const QCString &srcDir,const QCString &destinationDir)
         QFileInfo tFile(targetFileName);
         QDir destDirectory(tFile.dir());
 
-        /*   msg("dir:%s\nsrc:%s (%s)\n-> %s\ndirname:%s\n",
+          msg("dir:%s\nsrc:%s (%s)\n-> %s\ndirname:%s\n",
             srcDirName.data(),
             srcFullFilename.data(),
             relSrc.data(),
             targetFileName.data(),
             destDirectory.absPath().data()
             );
-            */
+
 
         // would be great to have QDir::mkpath() at this stage :)
         if (mkDirTree(destDirectory)) {
