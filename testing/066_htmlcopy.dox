@@ -1,6 +1,6 @@
 // objective: test HTML_EXTRA_FILES with directory
 // raw_check:  dummyfile.txt
-// check: indexpagve.xml
+// check: indexpage.xml
 // config: QUIET = NO
 // config: GENERATE_HTML = YES
 // config: HTML_EXTRA_FILES = ./066/html/dummyfile.txt ./066/data
